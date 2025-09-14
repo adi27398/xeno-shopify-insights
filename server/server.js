@@ -3,9 +3,14 @@ const express=require('express');
 const cors=require('cors');
 const app=express();
 
+const corsOptions={
+  origin:['http://localhost:3000','https://xeno-frontend-916k.onrender.com']
+};
+
+
 
 //Middleware ka setup
-app.use(cors());  // cross origin resource sharing enable krta hai 
+app.use(cors(corsOptions));  // cross origin resource sharing enable krta hai 
 
 //webhook verification ka key midddleware hai
 //yeh json ko parse toh krta hai pr sath mein raw body ko nayi property 'req.body' mein save krta hai  

@@ -1,10 +1,22 @@
 import React,{useState,useEffect} from 'react';
+import { io } from "socket.io-client";
 import apiClient from '../services/api';
 import {useAuth} from '../context/AuthContext';
 import {useNavigate} from 'react-router-dom';
 import StatCard from '../components/StatCard'; 
 import OrdersChart from '../components/OrdersChart';
 import TopCustomersList from '../components/TopCustomersList';
+
+const SOCKET_URL = process.env.REACT_APP_API_URL
+  ? process.env.REACT_APP_API_URL.replace('/api', '')
+  : 'http://localhost:5000';
+
+// Initialize the socket connection outside the component.
+const socket = io(SOCKET_URL, {
+  autoConnect: false // We will manually connect inside useEffect.
+});
+
+
 
 function DashboardPage(){
   const [summary,setSummary]=useState({totalCustomers:0,totalOrders:0,totalRevenue:0,totalProducts:0});
@@ -39,7 +51,39 @@ function DashboardPage(){
       }
     };
     fetchData();
-  },[]);
+ 
+
+  socket.connect();
+
+  const handleDashboardUpdate = (data) => {
+      console.log('Real-time update received:', data);
+      // Update state only for the data that was sent in the payload
+      if (data.summary) setSummary(data.summary);
+      if (data.ordersByDate) setOrdersByDate(data.ordersByDate);
+      if (data.topCustomers) setTopCustomers(data.topCustomers);
+    };
+    
+    // Listen for connection success
+    socket.on('connect', () => {
+        console.log(`Connected to WebSocket server with ID: ${socket.id}`);
+    });
+
+    // Listen for a custom event from the server, e.g., 'dashboardUpdated'
+    // Your server should emit this event when data changes.
+    socket.on('dashboardUpdated', handleDashboardUpdate);
+
+    // --- Phase 3: Cleanup ---
+    // This is crucial. It runs when the component unmounts (e.g., user navigates away).
+    return () => {
+      console.log('Disconnecting from WebSocket...');
+      socket.off('connect');
+      socket.off('dashboardUpdated', handleDashboardUpdate); // Remove the event listener
+      socket.disconnect(); // Disconnect the socket
+    };
+    }, []);// The empty dependency array ensures this runs only once on mount.
+
+ 
+
 
   const handleLogout=()=>{
     logout();
