@@ -55,10 +55,10 @@ app.get("/",(req,res)=>{
 });
 
 
-require('./routes/auth.routes')(app);
-require('./routes/tenant.routes')(app);
-require('./routes/webhook.routes')(app);
-require('./routes/insights.routes')(app);
+require('./app/routes/auth.routes')(app);
+require('./app/routes/tenant.routes')(app);
+require('./app/routes/webhook.routes')(app);
+require('./app/routes/insights.routes')(app);
 
 // seerver start karo 
 const PORT=process.env.PORT || 5000;
