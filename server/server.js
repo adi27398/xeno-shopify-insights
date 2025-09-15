@@ -67,4 +67,18 @@ require('./routes/insights.routes')(app);
 const PORT=process.env.PORT || 5000;
 app.listen(PORT,()=>{
   console.log(`Server is running on port ${PORT}.`);
+
+  if (process.env.NODE_ENV !== 'production') {
+    const ngrok = require('ngrok'); // Only require ngrok in development
+    (async function() {
+      try {
+        const url = await ngrok.connect(PORT);
+        console.log(`ngrok tunnel is open at: ${url}`);
+        console.log(`Paste this URL into your Shopify webhook settings for local testing.`);
+      } catch (err) {
+        console.error('Error starting ngrok:', err);
+      }
+    })();
+  }
+
 });
