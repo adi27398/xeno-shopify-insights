@@ -3,8 +3,20 @@ const express=require('express');
 const cors=require('cors');
 const app=express();
 
-const corsOptions={
-  origin:['http://localhost:3000','https://xeno-frontend-916k.onrender.com']
+const allowedOrigins=[
+  'http://localhost:3000',
+  'https://xeno-frontend-916k.onrender.com',
+];
+
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
 };
 
 
