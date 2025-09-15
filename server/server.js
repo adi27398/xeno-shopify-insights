@@ -8,16 +8,19 @@ const allowedOrigins=[
   'https://xeno-frontend-916k.onrender.com',
 ];
 
-
 const corsOptions = {
-  origin: function (origin, callback) {
-    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  }
+origin: function (origin, callback) {
+if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+callback(null, true);
+} else {
+callback(new Error('Not allowed by CORS'));
+}
+}
 };
+
+
+
+
 
 
 
@@ -55,10 +58,10 @@ app.get("/",(req,res)=>{
 });
 
 
-require('../app/routes/auth.routes')(app);
-require('../app/routes/tenant.routes')(app);
-require('../app/routes/webhook.routes')(app);
-require('../app/routes/insights.routes')(app);
+require('./routes/auth.routes')(app);
+require('./routes/tenant.routes')(app);
+require('./routes/webhook.routes')(app);
+require('./routes/insights.routes')(app);
 
 // seerver start karo 
 const PORT=process.env.PORT || 5000;
